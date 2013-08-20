@@ -7,6 +7,14 @@ class Aruco < Formula
 
     depends_on 'opencv'
     depends_on 'cmake' => :build
+
+    option 'strip-print', 'Strip out an annoying printf in aruco::Marker::calculateExtrinsics'
+
+    def patches
+        if build.include? 'strip-print'
+           DATA
+        end
+    end
     
     def install
         mkdir 'build' do
@@ -17,4 +25,16 @@ class Aruco < Formula
     end
 end
 
-
+__END__
+diff --git a/src/marker.cpp b/src/marker.cpp
+index 62b87ed..1c42b3a 100644
+--- a/src/marker.cpp
++++ b/src/marker.cpp
+@@ -294,7 +294,6 @@ void Marker::calculateExtrinsics(float markerSizeMeters,cv::Mat  camMatrix,cv::M
+     //rotate the X axis so that Y is perpendicular to the marker plane
+    if (setYPerperdicular) rotateXAxis(Rvec);
+     ssize=markerSizeMeters; 
+-    cout<<(*this)<<endl;
+     
+ }
+ 
